@@ -28,7 +28,7 @@ of specified ticker symbols.
 
 2. Install the required packages:
    ```
-   pip install yfinance pandas numpy
+   uv pip install yfinance pandas numpy
    ```
 
 ## Usage
@@ -38,7 +38,7 @@ of specified ticker symbols.
 
 2. Run the script:
    ```
-   python multi_period_volatility.py
+   uv run multi_period_volatility.py
    ```
 
 3. The script will output a tab-separated table with the volatility results for
