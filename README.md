@@ -1,15 +1,14 @@
-# Multi-Period Volatility Calculator
+# Historical Volatility Calculator
 
-This Python script calculates the historical volatility of stocks, ETFs, and
-other tradable securities over multiple time periods (1-year, 3-year, and
-5-year). It uses daily return data to compute annualized volatility for a list
-of specified ticker symbols.
+This Python script calculates the historical volatility of ETFs over multiple time periods (1-year, 3-year, and 5-year). It uses daily return data to compute annualized volatility for a predefined list of Vanguard ETFs.
 
 ## Features
 
-- Fetches historical price data for any ticker symbol using the yfinance library
+- Fetches historical price data using the yfinance library with improved reliability
 - Calculates annualized volatility for 1-year, 3-year, and 5-year periods
-- Outputs results in a format easy to copy into spreadsheet software
+- Includes retry logic with exponential backoff for handling rate limits
+- Provides progress indicators during processing
+- Outputs results in a tab-separated format for easy copying into spreadsheets
 
 ## Requirements
 
@@ -22,8 +21,8 @@ of specified ticker symbols.
 
 1. Clone this repository:
    ```
-   git clone https://github.com/slam/multi-period-volatility.git
-   cd multi-period-volatility
+   git clone https://github.com/slam/historical_volatility_calculator.git
+   cd historical_volatility_calculator
    ```
 
 2. Install the required packages:
@@ -33,37 +32,72 @@ of specified ticker symbols.
 
 ## Usage
 
-1. Open the script and modify the `tickers` list to include the symbols you
-   want to analyze.
-
-2. Run the script:
+1. Run the script:
    ```
-   uv run multi_period_volatility.py
+   uv run historical_volatility_calculator.py
    ```
 
-3. The script will output a tab-separated table with the volatility results for
-   each ticker, which can be easily copied into a spreadsheet.
+2. The script will:
+   - Process 24 predefined Vanguard ETFs (equity and bond funds)
+   - Show progress as it fetches data for each ETF
+   - Automatically handle rate limiting with retry logic
+   - Output a tab-separated table with volatility results
+
+3. Copy the output table into your preferred spreadsheet application.
 
 ## Sample Output
 
 ```
-Ticker  1Y Volatility    3Y Volatility    5Y Volatility
-AAPL    0.123456         0.234567         0.345678
-GOOGL   0.234567         0.345678         0.456789
-SPY     0.345678         0.456789         0.567890
+Processing BNDW (1/24)...
+Processing BNDX (2/24)...
+...
+
+ETF     1Y Volatility    3Y Volatility    5Y Volatility
+BNDW    0.065432         0.072341         0.068765
+VOO     0.152341         0.187654         0.201234
+VYM     0.141256         0.165432         0.178901
 ...
 ```
 
-## Notes
+## Included ETFs
 
-- The script uses 252 trading days for annualization, which is standard for US
-  markets. Adjust if using for other markets.
-- Ensure you have a stable internet connection, as the script fetches data
-  online.
-- Some securities may not have a full 5 years of historical data, which may
-  affect calculations.
-- The script can handle stocks, ETFs, and other securities available through
-  Yahoo Finance.
+The script analyzes the following Vanguard ETFs:
+
+**Equity ETFs:**
+- VT (Total World Stock)
+- VOO (S&P 500)
+- VYM (High Dividend Yield)
+- VIG (Dividend Appreciation)
+- VTV (Value)
+- VBR (Small-Cap Value)
+- VEA (Developed Markets)
+- VEU (All-World ex-US)
+- VYMI (International High Dividend)
+- VIGI (International Dividend Growth)
+- VWO (Emerging Markets)
+- VPL (Pacific)
+- VGK (European)
+
+**Bond ETFs:**
+- BNDW (World Bond)
+- BNDX (International Bond)
+- VWOB (Emerging Markets Government Bond)
+- VTES (Tax-Exempt Bond)
+- VCSH (Short-Term Corporate Bond)
+- VGIT (Intermediate-Term Treasury)
+- VTEB (Tax-Exempt Bond)
+- VGSH (Short-Term Treasury)
+- VGLT (Long-Term Treasury)
+- VCIT (Intermediate-Term Corporate Bond)
+- VTIP (Short-Term Inflation-Protected Securities)
+
+## Technical Details
+
+- Uses 252 trading days for annualization (standard for US markets)
+- Implements exponential backoff retry logic for API rate limits
+- Adds 1-second delay between ticker requests to prevent rate limiting
+- Requires minimum data points (252 days) for volatility calculation
+- Empty or missing data periods are handled gracefully
 
 ## License
 
